@@ -1,9 +1,19 @@
 package com.alex.weather_app.data
-
+import android.util.Log
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
 //import com.alex.weather_application.data.remote.WeatherApiService
 //import com.alex.weather_application.data.local.database.WeatherDao
 //import com.alex.weather_application.data.models.Weather
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import okhttp3.OkHttpClient
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.logging.HttpLoggingInterceptor
+
 import java.util.prefs.Preferences
 
 
@@ -19,22 +29,81 @@ import java.util.prefs.Preferences
  * Get local weather
  */
 
-class WeatherRepository(
+interface ApiService {
 
-   // private val apiService: WeatherApiService,
+    @GET("weather/forecast?lonLat=lon/14.333/lat/60.383")
+    //suspend fun getWeatherData(@Query("q") location: String): Response<WeatherApiResponse>
+    // The Query parameter is for adding the location cordinates at the end of the link
+    suspend fun getWeatherData(): Response<WeatherApiResponse>
+}
+
+class WeatherRepository() {
+
+
+
+    private val apiService: ApiService
+    private val BASE_URL = "https://maceo.sth.kth.se/"
+    private var weatherData: WeatherApiResponse = parseJsonToWeatherData("Empty") // make to mutable stateflow
    // private val weatherDao: WeatherDao
-) {
+
+    init {
+        val mHttpLoggingInterceptor = HttpLoggingInterceptor()
+            .setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        val mOkHttpClient = OkHttpClient
+            .Builder()
+            .addInterceptor(mHttpLoggingInterceptor)
+            .build()
+
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(mOkHttpClient)
+            .build()
+
+        apiService = retrofit.create(ApiService::class.java)
+    }
+
+
+
+    suspend fun fetchWeatherData(location: String): WeatherApiResponse {
+        Log.d("API :"," entered fetchWeatherData")
+
+            val response = apiService.getWeatherData()
+            if (response.isSuccessful) {
+                // Assuming you have a method to save data to the database
+                Log.d("API call:", "Successful")
+                weatherData = response.body()!!
+                return weatherData
+
+                //saveWeatherDataFromJson(response.body()) Somehow it is already parsed
+
+
+                //saveWeatherData(response.body())
+            } else {
+                // Handle API error
+                Log.d("API call:", "Fail")
+            }
+
+
+    return weatherData
+
+    }
+
+    fun saveWeatherDataFromJson(jsonString: String) {
+       val weatherData = parseJsonToWeatherData(jsonString)
+        // Save `weatherData` to a database or some form of storage
+    }
+
+     fun parseJsonToWeatherData(jsonString: String): WeatherApiResponse {
+        val gson = Gson()
+        return gson.fromJson(jsonString, WeatherApiResponse::class.java)
+    }
 
 
 
 
     // Fetches weather data from a remote source
-    suspend fun getWeatherData(location: String): Weather {
-        val response = Weather(+32.1,10,"Clear and blue sky in cali")//apiService.getWeather(location)
-        // Here you could also cache the response in a local database if needed
-      //  weatherDao.insertWeather(response.toWeatherEntity())
-        return  response.toWeather()
-    }
 
     /*
 

@@ -1,5 +1,6 @@
 package com.alex.weather_app.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +22,7 @@ import com.alex.weather_app.ui.viewmodels.WeatherViewModel
 fun HomeScreen(
     vm: WeatherViewModel
 ) {
+
 
     
     Column (modifier = Modifier
@@ -45,7 +48,11 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text(text = "Hallo CLAUDIA <3", fontSize = 46.sp)
+            Text(text = " Button API", fontSize = 46.sp)
+
+            Button(onClick = { vm.getWeather() }) {
+
+            }
 
         }
 

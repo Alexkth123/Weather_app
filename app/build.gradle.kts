@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
+    //id("org.jetbrains.kotlin.plugin.serialization version 1.5.10")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.21"
 }
 
 android {
@@ -54,6 +57,14 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
+
+    //implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0") // Use the latest version
+    implementation ("com.google.code.gson:gson:2.8.6")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
 
 
     implementation("androidx.core:core-ktx:1.9.0")
