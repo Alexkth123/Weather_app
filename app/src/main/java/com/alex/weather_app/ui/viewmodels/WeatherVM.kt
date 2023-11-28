@@ -45,7 +45,7 @@ class WeatherVM (
 
 
     override fun getWeather(){
-        job?.cancel()
+        //job?.cancel()
         Log.d("API","Calling model :model.make_weather_Box()  ")
 
 

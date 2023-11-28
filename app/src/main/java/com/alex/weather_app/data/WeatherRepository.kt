@@ -1,5 +1,6 @@
 package com.alex.weather_app.data
 import android.util.Log
+import com.alex.weather_app.exeptions.ApiException
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -43,7 +44,7 @@ class WeatherRepository() {
 
     private val apiService: ApiService
     private val BASE_URL = "https://maceo.sth.kth.se/"
-    private var weatherData: WeatherApiResponse = parseJsonToWeatherData("Empty") // make to mutable stateflow
+    //private var weatherData = parseJsonToWeatherData("hello") // make to mutable stateflow
    // private val weatherDao: WeatherDao
 
     init {
@@ -67,28 +68,21 @@ class WeatherRepository() {
 
 
     suspend fun fetchWeatherData(location: String): WeatherApiResponse {
-        Log.d("API :"," entered fetchWeatherData")
+        Log.d("API :", "entered fetchWeatherData")
 
-            val response = apiService.getWeatherData()
-            if (response.isSuccessful) {
-                // Assuming you have a method to save data to the database
-                Log.d("API call:", "Successful")
-                weatherData = response.body()!!
-                return weatherData
+        val response = apiService.getWeatherData()
+        if (response.isSuccessful) {
+            // Assuming you have a method to save data to the database
+            Log.d("API call:", "Successful")
 
-                //saveWeatherDataFromJson(response.body()) Somehow it is already parsed
-
-
-                //saveWeatherData(response.body())
-            } else {
-                // Handle API error
-                Log.d("API call:", "Fail")
-            }
-
-
-    return weatherData
-
+            return response.body() ?: throw IllegalStateException("Received null response body")
+        } else {
+            // Handle API error
+            Log.d("API call:", "Fail")
+            throw ApiException("Failed to fetch weather data: ${response.errorBody()?.string()}")
+        }
     }
+
 
     fun saveWeatherDataFromJson(jsonString: String) {
        val weatherData = parseJsonToWeatherData(jsonString)

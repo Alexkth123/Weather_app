@@ -50,7 +50,9 @@ fun HomeScreen(
 
             Text(text = " Button API", fontSize = 46.sp)
 
-            Button(onClick = { vm.getWeather() }) {
+            Button(onClick = {
+                vm.getWeather()
+            }) {
 
             }
 

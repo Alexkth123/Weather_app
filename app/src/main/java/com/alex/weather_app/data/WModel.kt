@@ -67,10 +67,10 @@ class WModel(private val repository: WeatherRepository){
  }
 
     suspend fun make_weather_Box(){
-        var _raw_data :WeatherApiResponse =repository.fetchWeatherData("Cali")
+        var _raw_data =repository.fetchWeatherData("Cali")
         Log.d("API response","${_raw_data.toString()}")
 
-        Log.d("API response","DAY 2: ${_raw_data.timeSeries[1].parameters.toString()}")
+        //Log.d("API response","DAY 2: ${_raw_data.timeSeries[1].parameters.toString()}")
 
 
 
