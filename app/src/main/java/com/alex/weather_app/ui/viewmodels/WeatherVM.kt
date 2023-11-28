@@ -11,6 +11,7 @@ import com.alex.weather_app.WeatherApplication
 import com.alex.weather_app.data.WModel
 import com.alex.weather_app.data.Weather
 import com.alex.weather_app.data.WeatherRepository
+import com.alex.weather_app.data.WeeklyWeatherForecast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 
 interface WeatherViewModel{
+    val weeklyForecast: StateFlow<WeeklyWeatherForecast>
      fun getWeather(){}
 
 }
@@ -37,10 +39,14 @@ class WeatherVM (
 ):WeatherViewModel,ViewModel() {
 
     private var job: Job? = null
-    private val _weatherData = MutableStateFlow<Weather?>(null)
-    val weatherData: StateFlow<Weather?> = _weatherData.asStateFlow()
+
+    //val weatherData: StateFlow<Weather?> = _weatherData.asStateFlow()
+    private var _weeklyForecast = MutableStateFlow<WeeklyWeatherForecast>(WeeklyWeatherForecast())
+    override val weeklyForecast: StateFlow<WeeklyWeatherForecast>
+        get() = _weeklyForecast
 
 
+    // make a new model for each new forcast created
     private val model= WModel(weatherRepository)
 
 
@@ -52,6 +58,7 @@ class WeatherVM (
           job =viewModelScope.launch {
             try {
                 model.make_weather_Box()
+                _weeklyForecast.value=model.make_weather_Box()
 
 
             }catch (exception: Exception) {
