@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  */
 
+
 class WModel(private val repository: WeatherRepository){
     val weeklyForecast = WeeklyWeatherForecast()
 
@@ -32,11 +33,11 @@ class WModel(private val repository: WeatherRepository){
  }
 
 
-    suspend fun make_weather_Box():WeeklyWeatherForecast{
+    suspend fun make_weather_Box(location: String):WeeklyWeatherForecast{
         // more relevant name "makeForecast"
 
 
-        var _data :WeatherApiResponse =repository.fetchWeatherData("Cali")
+        var _data :WeatherApiResponse =repository.fetchWeatherData(location)
         Log.d("API response","${_data.toString()}")
         Log.d("API response","${_data.timeSeries[1].parameters[10].toString()}")
         // timeSeris[x]= day

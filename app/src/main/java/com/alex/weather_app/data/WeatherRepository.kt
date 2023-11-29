@@ -14,6 +14,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.http.Path
 
 import java.util.prefs.Preferences
 
@@ -32,10 +33,11 @@ import java.util.prefs.Preferences
 
 interface ApiService {
 
-    @GET("weather/forecast?lonLat=lon/14.333/lat/60.383")
-    //suspend fun getWeatherData(@Query("q") location: String): Response<WeatherApiResponse>
-    // The Query parameter is for adding the location cordinates at the end of the link
-    suspend fun getWeatherData(): Response<WeatherApiResponse>
+//https://maceo.sth.kth.se/weather/forecast?lonLat=lon/14.333/lat/60.383
+    @GET("weather/forecast")
+    suspend fun getWeatherData(
+        @Query("lonLat") cordStr: String
+    ): Response<WeatherApiResponse>
 }
 
 class WeatherRepository() {
@@ -70,7 +72,7 @@ class WeatherRepository() {
     suspend fun fetchWeatherData(location: String): WeatherApiResponse {
         Log.d("API :", "entered fetchWeatherData")
 
-        val response = apiService.getWeatherData()
+        val response = apiService.getWeatherData(location)
         if (response.isSuccessful) {
             // Assuming you have a method to save data to the database
             Log.d("API call:", "Successful")

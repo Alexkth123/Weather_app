@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.alex.weather_app.WeatherApplication
+import com.alex.weather_app.data.Coordinates
 import com.alex.weather_app.data.WModel
 import com.alex.weather_app.data.Weather
 import com.alex.weather_app.data.WeatherRepository
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 
 interface WeatherViewModel{
     val weeklyForecast: StateFlow<WeeklyWeatherForecast>
+    val coordinates: StateFlow<Coordinates>
      fun getWeather(){}
 
 }
@@ -37,13 +39,16 @@ interface WeatherViewModel{
 class WeatherVM (
     private val weatherRepository: WeatherRepository
 ):WeatherViewModel,ViewModel() {
-
     private var job: Job? = null
 
     //val weatherData: StateFlow<Weather?> = _weatherData.asStateFlow()
     private var _weeklyForecast = MutableStateFlow<WeeklyWeatherForecast>(WeeklyWeatherForecast())
     override val weeklyForecast: StateFlow<WeeklyWeatherForecast>
         get() = _weeklyForecast
+
+    private var _coordinates = MutableStateFlow<Coordinates>(Coordinates(14.333f, 60.383f))
+    override val coordinates: StateFlow<Coordinates>
+        get() = _coordinates
 
 
     // make a new model for each new forcast created
@@ -54,11 +59,13 @@ class WeatherVM (
         //job?.cancel()
         Log.d("API","Calling model :model.make_weather_Box()  ")
 
+        Log.d("API call to :", "${_coordinates.value.toString()}")
+
 
           job =viewModelScope.launch {
             try {
-                model.make_weather_Box()
-                _weeklyForecast.value=model.make_weather_Box()
+                model.make_weather_Box(_coordinates.value.toString())
+                _weeklyForecast.value=model.make_weather_Box(_coordinates.value.toString())
 
 
             }catch (exception: Exception) {
