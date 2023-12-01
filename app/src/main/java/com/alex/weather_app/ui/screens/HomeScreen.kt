@@ -40,6 +40,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.platform.LocalContext
+import com.alex.weather_app.data.weather_type
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -49,7 +50,7 @@ fun HomeScreen(
 ) {
     val weeklyForecast by vm.weeklyForecast.collectAsState()
     val context = LocalContext.current
-    vm.getWeather()
+    //vm.getWeather()
 
 
 
@@ -93,7 +94,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Text(text = " Button API", fontSize = 46.sp)
+            Text(text = " Button API"+ weather_type.`☀️`, fontSize = 46.sp)
 
             Button(onClick = { vm.getWeather() }) {}
 
@@ -141,13 +142,12 @@ fun WeatherDayItem(weatherBox: Weather_Box?) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Weather on day: ", fontWeight = FontWeight.Bold)
             if (weatherBox != null) {
+                Text(text = "${weatherBox.weatherType}")
                 Text(text = "Temp: ${weatherBox.weather.temperature.toString()}°")
-            }
-            if (weatherBox != null) {
                 Text(text = "Rain: ${weatherBox.weather.rain.toString()}%")
-            }
-            if (weatherBox != null) {
                 Text(text = "Wind Speed: ${weatherBox.weather.wind_speed.toString()}m/s")
+
+
             }
             // Add additional weather info here
         }

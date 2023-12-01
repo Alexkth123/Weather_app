@@ -50,13 +50,27 @@ class WModel(private val repository: WeatherRepository){
 
         for (i in 0 until 7) {
 
+            // temp>0
+            // temp >0 + rain
+            val temp = _data.timeSeries[i].parameters[10].values.get(0)
+            val ranin= _data.timeSeries[i].parameters[15].values.get(0)
+            var  weatherType = weather_type.`☀️`
+
+            when {
+                temp > 0.0&&ranin >= 20 -> weatherType=weather_type.`☀️`
+                temp < 0.0&&ranin >= 20 -> weatherType=weather_type.`️❄️`
+                temp > 0.0&&ranin >= 40 -> weatherType=weather_type.`️🌧️`
+
+                else -> weatherType = weather_type.`️💀`
+            }
+
 
             val weatherBox = Weather_Box(
                 Weather(_data.timeSeries[i].parameters[10].values.toString(),
                 _data.timeSeries[i].parameters[15].values.toString(),
                 _data.timeSeries[i].parameters[10].values.toString(),
                 _data.timeSeries[i].parameters[14].values.toString(),
-                "Main stream description") ) //weather_type.SUNNY
+                "Main stream description"),weatherType ) //weather_type.SUNNY
 
             weeklyForecast.setWeatherBoxForDay(i, weatherBox)
         }

@@ -6,7 +6,7 @@ package com.alex.weather_app.data
  */
 class Weather_Box (
    val weather: Weather,
-   //val weatherType: weather_type
+   val weatherType: weather_type
 ){
 
 
@@ -45,7 +45,13 @@ enum class weather_type{
     FULL_ClOUD,
     HALF_CLOUD,
     SUNNY,
-    RAIN
+    RAIN,
+    `☀️`,
+    `🌥️`,
+    `️🌧️`,
+    `️❄️`,
+    `️💀`
+
 
 }
 
