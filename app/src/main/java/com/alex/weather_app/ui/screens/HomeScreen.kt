@@ -35,6 +35,12 @@ import androidx.compose.ui.unit.sp
 import com.alex.weather_app.data.Weather_Box
 import com.alex.weather_app.data.WeeklyWeatherForecast
 import com.alex.weather_app.ui.viewmodels.WeatherViewModel
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @Composable
@@ -42,6 +48,15 @@ fun HomeScreen(
     vm: WeatherViewModel
 ) {
     val weeklyForecast by vm.weeklyForecast.collectAsState()
+    val context = LocalContext.current
+    vm.getWeather()
+
+
+
+    //val isInternetConnected = isInternetAvailable(context)
+    val isInternetConnected : MutableStateFlow<Boolean> = MutableStateFlow(isInternetAvailable(context))
+
+
 
 
     
@@ -58,6 +73,14 @@ fun HomeScreen(
                 .padding(),
         ){
             Text(text = "Location", fontSize = 16.sp)
+
+
+
+            if(true){
+                Text(text = "Internet")
+            }else{
+                Text(text = "No Internet")
+            }
 
             MyInputComponent(vm)
 
@@ -78,7 +101,9 @@ fun HomeScreen(
             Column (modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))){
 
 
-                LazyColumn(modifier = Modifier.padding(10.dp).background(Color.Transparent,RoundedCornerShape(10.dp))) {
+                LazyColumn(modifier = Modifier
+                    .padding(10.dp)
+                    .background(Color.Transparent, RoundedCornerShape(10.dp))) {
                     item {
                         Text(text = "Weekly Forecast")
                     }
@@ -138,7 +163,9 @@ fun MyInputComponent(vm: WeatherViewModel) {
     var firstInput by remember { mutableStateOf("") }
     var secondInput by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(6.dp).background(Color.Green, RoundedCornerShape(10.dp))) {
+    Column(modifier = Modifier
+        .padding(6.dp)
+        .background(Color.Green, RoundedCornerShape(10.dp))) {
 
        /*
         TextField(
@@ -177,8 +204,12 @@ fun MyInputComponent(vm: WeatherViewModel) {
 
             if (firstFloat != null && secondFloat != null) {
                 // Do something with the float values
+                //Check if the cordinates are new
+               // if(vm.coordinates.value.lat.toString()!=firstInput&& vm.coordinates.value.lon.toString()!=secondInput){}
+                // Can be useful to check if the cordinates are new
 
-                vm.coordinates.value.setCoordinates(firstFloat,secondFloat)// Does not really make sence with the handeling of corninates
+                vm.coordinates.value.setCoordinates(firstFloat,secondFloat)
+                vm.newWeatherLocation()
             } else {
                 // Handle invalid input
             }
@@ -189,6 +220,36 @@ fun MyInputComponent(vm: WeatherViewModel) {
     }
 }
 
+
+@Composable
+fun MyConnectivityAwareComponent() {
+    val context = LocalContext.current
+    val isInternetConnected = isInternetAvailable(context)
+
+    if (isInternetConnected) {
+        // UI for when the internet is available
+    } else {
+        // UI for when the internet is not available
+    }
+}
+
+
+
+
+
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+    return when {
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        else -> false
+    }
+}
 
 
 /*

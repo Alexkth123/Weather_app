@@ -19,15 +19,20 @@ import com.alex.weather_app.ui.viewmodels.WeatherViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alex.weather_app.data.Weather
 import com.alex.weather_app.ui.screens.HomeScreen
+import java.util.Timer
 
 
-class MainActivity : ComponentActivity() {
+public class MainActivity : ComponentActivity() {
 
     val weatherViewModel: WeatherVM by viewModels { WeatherVM.Factory }
 
 
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             Weather_appTheme {
                 // A surface container using the 'background' color from the theme

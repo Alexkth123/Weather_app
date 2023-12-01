@@ -1,6 +1,7 @@
 package com.alex.weather_app.data
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import com.alex.weather_app.data.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class WModel(private val repository: WeatherRepository){
     val weeklyForecast = WeeklyWeatherForecast()
+
 
      init {
      //val _parsed_data :MutableStateFlow<WeatherApiResponse>

@@ -1,4 +1,8 @@
 package com.alex.weather_app.data
+import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
 import com.alex.weather_app.exeptions.ApiException
 import retrofit2.Call
@@ -94,6 +98,20 @@ class WeatherRepository() {
      fun parseJsonToWeatherData(jsonString: String): WeatherApiResponse {
         val gson = Gson()
         return gson.fromJson(jsonString, WeatherApiResponse::class.java)
+    }
+
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+        return when {
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            else -> false
+        }
     }
 
 
