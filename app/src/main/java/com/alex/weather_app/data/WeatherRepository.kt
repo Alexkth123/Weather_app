@@ -38,9 +38,9 @@ import java.util.prefs.Preferences
 interface ApiService {
 
 //https://maceo.sth.kth.se/weather/forecast?lonLat=lon/14.333/lat/60.383
-    @GET("weather/forecast")
+    @GET("api/category/pmp3g/version/2/geotype/point/{cord}/data.json")
     suspend fun getWeatherData(
-        @Query("lonLat") cordStr: String
+        @Path("cord", encoded = true) cordStr: String
     ): Response<WeatherApiResponse>
 }
 
@@ -49,7 +49,7 @@ class WeatherRepository() {
 
 
     private val apiService: ApiService
-    private val BASE_URL = "https://maceo.sth.kth.se/"
+    private val BASE_URL = "https://opendata-download-metfcst.smhi.se/"
     //private var weatherData = parseJsonToWeatherData("hello") // make to mutable stateflow
    // private val weatherDao: WeatherDao
 

@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import com.alex.weather_app.R
 import com.alex.weather_app.data.WeatherDay
 import com.alex.weather_app.data.WeeklyWeatherForecast
@@ -51,6 +52,8 @@ import com.alex.weather_app.ui.theme.StandbyBlue
 import com.alex.weather_app.ui.theme.StyleBlue
 import com.alex.weather_app.ui.viewmodels.WeatherVM
 import kotlinx.coroutines.delay
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -143,15 +146,32 @@ fun HomeScreen(
                         .height(70.dp)
                 )
             }
-            Text(text = "Weather " + weather_type.`☀️`, fontSize = 46.sp)
+            Text(
+                text = "Weekly Forecast ",
+                fontSize = 45.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif
+            )
 
-            Button(
+            val currentDateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy - HH:mm")
+            val formattedDateTime = currentDateTime.format(formatter)
+
+            Text(
+                text = formattedDateTime,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Serif
+            )
+
+
+            /*Button(
                 onClick = {
                     vm.getWeather()
                 }
             ) {
                 Text(text = "Test KTH API")
-            }
+            }*/
 
             // Weekly Forecast Column - Scrollable
             Column (
@@ -160,7 +180,6 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Text(text = "Weekly Forecast")
                 LazyColumn(
                     modifier = Modifier
                         .padding(10.dp)
@@ -169,37 +188,11 @@ fun HomeScreen(
                     item {
                         WeatherDayItem(vm, weeklyForecast, clickedWeatherBox)
                     }
-                    // This for-loop will create list items for each day's forecast
-                    /*for (day in WeatherDay.values()) {
-                        item {
-
-                            //WeatherDayItem(weeklyForecast.getDailyForecast(day).getHourlyForecast(12), int_to_day_string(day.int).name)
-                        }
-                    }*/
                 }
             }
         }
     }
 }
-/*
-@Composable
-fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "${dayOfWeek}:", fontWeight = FontWeight.Bold)
-            if (weatherBox != null) {
-                Text(text = "${weatherBox.weatherType.emoji}")
-                Text(text = "Temp: ${weatherBox.weatherParams.temperature.toString()}°")
-                Text(text = "Humidity: ${weatherBox.weatherParams.relativeHumidity.toString()}%")
-                Text(text = "Wind Speed: ${weatherBox.weatherParams.windSpeed.toString()}m/s")
-            }
-        }
-    }
-}*/
 
 
 @Composable
@@ -282,7 +275,7 @@ fun MyInputComponent(vm: WeatherViewModel) {
         TextField(
             value = firstInput,
             onValueChange = { firstInput = it },
-            label = { Text("LAT") },
+            label = { Text("LON") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier
                 .background(Color.Magenta, RoundedCornerShape(50.dp))
@@ -292,7 +285,7 @@ fun MyInputComponent(vm: WeatherViewModel) {
         TextField(
             value = secondInput,
             onValueChange = { secondInput = it },
-            label = { Text("LON") },
+            label = { Text("LAT") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier
                 .background(Color.Magenta, RoundedCornerShape(50.dp))
