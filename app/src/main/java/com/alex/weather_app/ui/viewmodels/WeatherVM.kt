@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
+import com.alex.weather_app.ui.theme.StyleBlue
 
 
 interface WeatherViewModel{
@@ -123,8 +124,6 @@ class WeatherVM (
     }
 
     override fun newWeatherLocation() {
-
-        //
 
         job =viewModelScope.launch {
             try {

@@ -51,8 +51,6 @@ enum class weather_type{
     `️🌧️`,
     `️❄️`,
     `️💀`
-
-
 }
 
 
@@ -65,6 +63,21 @@ fun Weather.toWeather(): Weather {
         wind_speed=this.wind_speed,
         description = this.description
     )
+}
+
+fun int_to_day_string(int: Int): String{
+
+    val day = when (int+1){
+        1 -> return "Monday"
+        2 -> return "Tuesday"
+        3 -> return "Wednesday"
+        4 -> return "Thursday"
+        5 -> return "Friday"
+        6 -> return "Suturday"
+        7 -> return "Sunday"
+        else -> "Huh?"
+    }
+    return "Something went wrong!"
 }
 
 
