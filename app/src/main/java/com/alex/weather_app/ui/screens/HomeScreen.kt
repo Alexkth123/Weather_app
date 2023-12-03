@@ -33,7 +33,11 @@ import com.alex.weather_app.ui.viewmodels.WeatherViewModel
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +45,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.alex.weather_app.R
 import com.alex.weather_app.data.WeatherDay
-import com.alex.weather_app.data.int_to_day_string
+import com.alex.weather_app.data.WeeklyWeatherForecast
 import com.alex.weather_app.data.weather_type
+import com.alex.weather_app.ui.theme.StandbyBlue
 import com.alex.weather_app.ui.theme.StyleBlue
+import com.alex.weather_app.ui.viewmodels.WeatherVM
 import kotlinx.coroutines.delay
 
 
@@ -56,6 +62,8 @@ fun HomeScreen(
 
     var isInternetConnected by remember { mutableStateOf(true) }
     var showSearchMenu by remember { mutableStateOf(false) }
+
+    val clickedWeatherBox by vm.clickedWeatherBox.collectAsState()
 
     // This LaunchedEffect will run when the component is first launched
     LaunchedEffect(Unit) {
@@ -146,27 +154,34 @@ fun HomeScreen(
             }
 
             // Weekly Forecast Column - Scrollable
-            Column (modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))){
+            Column (
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(10.dp)),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(text = "Weekly Forecast")
                 LazyColumn(
                     modifier = Modifier
                         .padding(10.dp)
                         .background(Color.Transparent, RoundedCornerShape(10.dp))
                 ) {
                     item {
-                        Text(text = "Weekly Forecast")
+                        WeatherDayItem(vm, weeklyForecast, clickedWeatherBox)
                     }
                     // This for-loop will create list items for each day's forecast
-                    for (day in WeatherDay.values()) {
+                    /*for (day in WeatherDay.values()) {
                         item {
-                            WeatherDayItem(weeklyForecast.getDailyForecast(day).getHourlyForecast(12), int_to_day_string(day.int).name)
+
+                            //WeatherDayItem(weeklyForecast.getDailyForecast(day).getHourlyForecast(12), int_to_day_string(day.int).name)
                         }
-                    }
+                    }*/
                 }
             }
         }
     }
 }
-
+/*
 @Composable
 fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
     Card(
@@ -179,8 +194,73 @@ fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
             if (weatherBox != null) {
                 Text(text = "${weatherBox.weatherType.emoji}")
                 Text(text = "Temp: ${weatherBox.weatherParams.temperature.toString()}°")
-                Text(text = "Rain: ${weatherBox.weatherParams.relativeHumidity.toString()}%")
+                Text(text = "Humidity: ${weatherBox.weatherParams.relativeHumidity.toString()}%")
                 Text(text = "Wind Speed: ${weatherBox.weatherParams.windSpeed.toString()}m/s")
+            }
+        }
+    }
+}*/
+
+
+@Composable
+fun WeatherDayItem(vm: WeatherViewModel, weeklyForecast: WeeklyWeatherForecast, clickedWeatherBox: Weather_Box?) {
+
+    for (day in WeatherDay.values()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = "${day}:", fontWeight = FontWeight.Bold)
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    val itemCount = 24
+                    items(itemCount) { index ->
+                        val value = 0 + index
+                        val weatherBox = weeklyForecast.getDailyForecast(day).getHourlyForecast(value)
+                        if (weatherBox != null) {
+                            Box(
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(100.dp)
+                                    .background(
+                                        color = if (weatherBox.equals(clickedWeatherBox)) StandbyBlue else Color.Transparent
+                                    )
+                                    .padding(8.dp)
+                                    .clickable { vm.setClickedWeatherBox(weatherBox) },
+
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(0.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = if (value < 10) "0${value}" else "${value}",
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                    Text(
+                                        text = "${weatherBox.weatherType.emoji}",
+                                        style = MaterialTheme.typography.headlineLarge
+                                    )
+                                    Text(
+                                        text = "${weatherBox.weatherParams.temperature}°C",
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                if(clickedWeatherBox != null && clickedWeatherBox.weatherDate != "" && clickedWeatherBox.weatherDay == day) {
+                    Text(text = "Humidity: ${clickedWeatherBox.weatherParams.relativeHumidity}%")
+                    Text(text = "Wind Speed: ${clickedWeatherBox.weatherParams.windSpeed}m/s")
+                }
             }
         }
     }

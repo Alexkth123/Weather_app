@@ -11,3 +11,4 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val StyleBlue = Color(red = 37, green = 150, blue = 190, alpha = 255)
+val StandbyBlue = Color(red = 37, green = 150, blue = 190, alpha = 50)

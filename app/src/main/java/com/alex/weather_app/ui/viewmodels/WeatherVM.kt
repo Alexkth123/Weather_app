@@ -8,7 +8,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.alex.weather_app.data.Coordinates
 import com.alex.weather_app.data.WModel
+import com.alex.weather_app.data.WeatherDay
+import com.alex.weather_app.data.WeatherParameters
 import com.alex.weather_app.data.WeatherRepository
+import com.alex.weather_app.data.WeatherType
+import com.alex.weather_app.data.Weather_Box
 import com.alex.weather_app.data.WeeklyWeatherForecast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,8 +28,10 @@ interface WeatherViewModel{
     val coordinates: StateFlow<Coordinates>
     val internetConnection : LiveData<Boolean>
     val secondsElapsed: LiveData<Int>
+    val clickedWeatherBox: StateFlow<Weather_Box?>
      fun getWeather()
      fun newWeatherLocation()
+     fun setClickedWeatherBox(weatherBox: Weather_Box)
 }
 
 
@@ -61,6 +67,12 @@ class WeatherVM (
     private var _internetConnection =MutableLiveData(true)
     override val internetConnection: LiveData<Boolean>
         get() = _internetConnection
+
+    private var _clickedWeatherBox = MutableStateFlow(Weather_Box("", WeatherDay.MONDAY, 0,
+        WeatherParameters("", "", "","", "", "","", "", "","", "", "","", "", "","", "", ""),
+        WeatherType.CLEAR_SKY))
+    override val clickedWeatherBox: StateFlow<Weather_Box?>
+        get() = _clickedWeatherBox
 
 
     // make a new model for each new forcast created
@@ -118,18 +130,9 @@ class WeatherVM (
         }
     }
 
-
-    /*
-        companion object {
-            val Factory: ViewModelProvider.Factory = viewModelFactory {
-                initializer {
-                    val application = (this[APPLICATION_KEY] as WeatherApplication)
-                    WeatherVM(application.weatherRepository)
-                }
-            }
-        }
-
-     */
+    override fun setClickedWeatherBox(weatherBox: Weather_Box){
+        _clickedWeatherBox.value = weatherBox
+    }
 
     companion object {
         val Factory = object : ViewModelProvider.Factory {
@@ -163,22 +166,12 @@ class WeatherVM (
 
 
     init {
-
         startTimer(300)
-        /*
-        // Code that runs during creation of the vm
-        viewModelScope.launch {
-            try {
-              //  val weather = weatherRepository.
-               // _weatherData.value = weather
-
-            } catch (e: Exception) {
-                // Handle exceptions, possibly updating a UI state to show an error message
+        /*viewModelScope.launch {
+            userPreferencesRepository.numberOfEvents.collect {
+                _numberOfEvents.value = it
             }
-        }
-
-         */
-
+        }*/
     }
 
 }
