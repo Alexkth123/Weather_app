@@ -154,7 +154,7 @@ fun HomeScreen(
             )
 
             val currentDateTime = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy - HH:mm")
+            val formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy")
             val formattedDateTime = currentDateTime.format(formatter)
 
             Text(
