@@ -5,14 +5,17 @@ package com.alex.weather_app.data
  * image of the weather condition
  */
 class Weather_Box (
-   val weather: Weather,
-   val weatherType: weather_type
+    val weatherDate: String,
+    val weatherDay: WeatherDay,
+    val weatherHour: Int,
+    val weatherParams: WeatherParameters,
+    val weatherType: WeatherType
 ){
-
-
     private fun get_weather_box():Weather_Box{
         return this
     }
+
+
 }
 
 
@@ -24,60 +27,131 @@ class Weather_Box (
  *  ViewModel, and Repository layers
  */
 
-data class Weather(
-    val temperature: String,
-    val rain: String,
-    val cloud_covrage: String,
-    val wind_speed:String,
-    val description: String,
-    // ... other weather-related properties
-){
+data class WeatherParameters(
+    var temperature: String,
+    var seaLevelPressure: String,
+    var visibility: String,
+    var windDirection: String,
+    var windSpeed:String,
+    var relativeHumidity: String,
+    var thunderstormProbability: String,
+    var totalCloudCover: String,
+    var lowCloudCover: String,
+    var mediumCloudCover: String,
+    var highCloudCover: String,
+    var windGust: String,
+    var minPrecipitation: String,
+    var maxPrecipitation: String,
+    var percentOfPrecipitationInFrozenForm: String,
+    var precipitationCategory: String,
+    var meanPrecipitation: String,
+    var medianPrecipitation: String
+){}
 
-    override fun toString(): String {
-        val str = "Temp ="+ temperature
+enum class WeatherType(val emoji: weather_type, val wSymbol: Int) {
+    CLEAR_SKY(weather_type.`☀️`, 1),
+    NEARLY_CLEAR_SKY(weather_type.`☀️`, 2),
+    VARIABLE_CLOUDINESS(weather_type.`🌥️`, 3),
+    HALF_CLEAR_SKY(weather_type.`🌥️`, 4),
+    CLOUDY_SKY(weather_type.`☁️`, 5),
+    OVERCAST(weather_type.`☁️`, 6),
+    FOG(weather_type.`☁️`, 7),
+    LIGHT_RAIN_SHOWERS(weather_type.`️🌧️`, 8),
+    MODERATE_RAIN_SHOWERS(weather_type.`️🌧️`, 9),
+    HEAVY_RAIN_SHOWERS(weather_type.`️🌧️`, 10),
+    THUNDERSTORM(weather_type.`️⛈️`, 11),
+    LIGHT_SLEET_SHOWERS(weather_type.`️🌧️`, 12),
+    MODERATE_SLEET_SHOWERS(weather_type.`️🌧️`, 13),
+    HEAVY_SLEET_SHOWERS(weather_type.`️🌧️`, 14),
+    LIGHT_SNOW_SHOWERS(weather_type.`️🌨️`, 15),
+    MODERATE_SNOW_SHOWERS(weather_type.`️🌨️`, 16),
+    HEAVY_SNOW_SHOWERS(weather_type.`️🌨️`, 17),
+    LIGHT_RAIN(weather_type.`️🌧️`, 18),
+    MODERATE_RAIN(weather_type.`️🌧️`, 19),
+    HEAVY_RAIN(weather_type.`️🌧️`, 20),
+    THUNDER(weather_type.`️⛈️`, 21),
+    LIGHT_SLEET(weather_type.`☁️`, 22),
+    MODERATE_SLEET(weather_type.`☁️`, 23),
+    HEAVY_SLEET(weather_type.`☁️`, 24),
+    LIGHT_SNOWFALL(weather_type.`️🌨️`, 25),
+    MODERATE_SNOWFALL(weather_type.`️🌨️`, 26),
+    HEAVY_SNOWFALL(weather_type.`️🌨️`, 27);
 
-        return str
+    companion object {
+        fun getByWSymbol(wSymbol: Int): WeatherType? {
+            return values().find { it.wSymbol == wSymbol }
+        }
+    }
+}
+
+enum class WeatherDay(val int: Int) {
+    MONDAY(0),
+    TUESDAY(1),
+    WEDNESDAY(2),
+    THURSDAY(3),
+    FRIDAY(4),
+    SATURDAY(5),
+    SUNDAY(6);
+
+    companion object {
+        fun getByInt(value: Int): WeatherDay? {
+            return values().find { it.int == value }
+        }
     }
 }
 
 
-enum class weather_type{
-    FULL_ClOUD,
-    HALF_CLOUD,
-    SUNNY,
-    RAIN,
-    `☀️`,
-    `🌥️`,
-    `️🌧️`,
-    `️❄️`,
-    `️💀`
+
+enum class weather_type(val emoji: String){
+    `☀️`("Sunny"),
+    `🌥️`("HalfClear"),
+    `☁️`("Cloudy"),
+    `️🌧️`("Rainy"),
+    `️❄️`("Cold"),
+    `️⛈️`("Thunder"),
+    `️🌨️`("Snowy"),
+    `️💀`("Ded")
 }
 
 
 // Maybe not useful since every value is a string
+/*
 fun Weather.toWeather(): Weather {
     return Weather(
         temperature = this.temperature,
-        cloud_covrage = this.cloud_covrage,
-        rain= this.rain,
-        wind_speed=this.wind_speed,
-        description = this.description
+        seaLevelPressure = this.seaLevelPressure,
+        visibility = this.visibility,
+        windDirection = this.windDirection,
+        windSpeed = this.windSpeed,
+        relativeHumidity = this.relativeHumidity,
+        thunderstormProbability = this.thunderstormProbability,
+        totalCloudCover = this.totalCloudCover,
+        lowCloudCover = this.lowCloudCover,
+        mediumCloudCover = this.mediumCloudCover,
+        highCloudCover = this.highCloudCover,
+        windGust = this.windGust,
+        minPrecipitation = this.minPrecipitation,
+        maxPrecipitation = this.maxPrecipitation,
+        sunshineProbability = this.sunshineProbability,
+        precipitationCategory = this.precipitationCategory,
+        meanPrecipitation = this.meanPrecipitation,
+        medianPrecipitation = this.medianPrecipitation
     )
-}
+}*/
 
-fun int_to_day_string(int: Int): String{
 
-    val day = when (int+1){
-        1 -> return "Monday"
-        2 -> return "Tuesday"
-        3 -> return "Wednesday"
-        4 -> return "Thursday"
-        5 -> return "Friday"
-        6 -> return "Suturday"
-        7 -> return "Sunday"
-        else -> "Huh?"
+fun int_to_day_string(int: Int): WeatherDay{
+
+    when (int){
+        0 -> return WeatherDay.MONDAY
+        1 -> return WeatherDay.TUESDAY
+        2 -> return WeatherDay.WEDNESDAY
+        3 -> return WeatherDay.THURSDAY
+        4 -> return WeatherDay.FRIDAY
+        5 -> return WeatherDay.SATURDAY
+        6 -> return WeatherDay.SUNDAY
     }
-    return "Something went wrong!"
+    return WeatherDay.MONDAY
 }
 
 

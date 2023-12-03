@@ -1,11 +1,6 @@
 package com.alex.weather_app.data
 
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-
-@Serializable
 data class WeatherApiResponse(
     val approvedTime: String,
     val referenceTime: String,
@@ -13,19 +8,19 @@ data class WeatherApiResponse(
     val timeSeries: List<TimeSeries>
 )
 
-@Serializable
+
 data class Geometry(
     val type: String,
     val coordinates: List<List<Double>>
 )
 
-@Serializable
+
 data class TimeSeries(
     val validTime: String,
     val parameters: List<Parameter>
 )
 
-@Serializable
+
 data class Parameter(
     val name: String,
     val levelType: String,

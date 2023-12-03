@@ -1,35 +1,22 @@
 package com.alex.weather_app.ui.viewmodels
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.alex.weather_app.WeatherApplication
 import com.alex.weather_app.data.Coordinates
 import com.alex.weather_app.data.WModel
-import com.alex.weather_app.data.Weather
 import com.alex.weather_app.data.WeatherRepository
-import com.alex.weather_app.data.Weather_Box
 import com.alex.weather_app.data.WeeklyWeatherForecast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
-import com.alex.weather_app.ui.theme.StyleBlue
 
 
 interface WeatherViewModel{
@@ -39,8 +26,6 @@ interface WeatherViewModel{
     val secondsElapsed: LiveData<Int>
      fun getWeather()
      fun newWeatherLocation()
-
-
 }
 
 
@@ -65,11 +50,11 @@ class WeatherVM (
 
 
     //val weatherData: StateFlow<Weather?> = _weatherData.asStateFlow()
-    private var _weeklyForecast = MutableStateFlow<WeeklyWeatherForecast>(WeeklyWeatherForecast())
+    private var _weeklyForecast = MutableStateFlow(WeeklyWeatherForecast())
     override val weeklyForecast: StateFlow<WeeklyWeatherForecast>
         get() = _weeklyForecast
 
-    private var _coordinates = MutableStateFlow<Coordinates>(Coordinates(14.333f, 60.383f))
+    private var _coordinates = MutableStateFlow(Coordinates(14.333f, 60.383f))
     override val coordinates: StateFlow<Coordinates>
         get() = _coordinates
 
@@ -103,7 +88,7 @@ class WeatherVM (
                 job =viewModelScope.launch {
                     try {
                         //model.make_weather_Box(_coordinates.value.toString())
-                        _weeklyForecast.value=model.make_weather_Box(_coordinates.value.toString())
+                        _weeklyForecast.value = model.buildWeeklyForecast(_coordinates.value.toString())
 
 
                     }catch (exception: Exception) {
@@ -117,10 +102,6 @@ class WeatherVM (
 
             }else{}
         }
-
-       // job?.cancel()
-
-
     }
 
     override fun newWeatherLocation() {
@@ -128,7 +109,7 @@ class WeatherVM (
         job =viewModelScope.launch {
             try {
                 //model.make_weather_Box(_coordinates.value.toString())
-                _weeklyForecast.value=model.make_weather_Box(_coordinates.value.toString())
+                _weeklyForecast.value=model.buildWeeklyForecast(_coordinates.value.toString())
 
 
             }catch (exception: Exception) {

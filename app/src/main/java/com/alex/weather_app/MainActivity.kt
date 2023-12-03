@@ -11,15 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.alex.weather_app.data.WeatherRepository
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.alex.weather_app.ui.screens.HomeScreen
 import com.alex.weather_app.ui.theme.Weather_appTheme
 import com.alex.weather_app.ui.viewmodels.WeatherVM
-import com.alex.weather_app.ui.viewmodels.WeatherViewModel
-
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alex.weather_app.data.Weather
-import com.alex.weather_app.ui.screens.HomeScreen
-import java.util.Timer
 
 
 public class MainActivity : ComponentActivity() {

@@ -1,20 +1,16 @@
 package com.alex.weather_app.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,12 +29,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alex.weather_app.data.Weather_Box
-import com.alex.weather_app.data.WeeklyWeatherForecast
 import com.alex.weather_app.ui.viewmodels.WeatherViewModel
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,12 +40,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.alex.weather_app.R
+import com.alex.weather_app.data.WeatherDay
 import com.alex.weather_app.data.int_to_day_string
 import com.alex.weather_app.data.weather_type
 import com.alex.weather_app.ui.theme.StyleBlue
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.time.DayOfWeek
 
 
 @Composable
@@ -66,7 +59,6 @@ fun HomeScreen(
 
     // This LaunchedEffect will run when the component is first launched
     LaunchedEffect(Unit) {
-        // This coroutine will run indefinitely
         while (true) {
             // Check for internet connectivity
             isInternetConnected = isInternetAvailable(context)
@@ -75,11 +67,12 @@ fun HomeScreen(
                 showSearchMenu = false
             }
 
-            // Wait for a certain interval before checking again (e.g., 10 seconds)
+            // Check internet interval
             delay(1000)
         }
     }
 
+    // Main Column for HomeScreen
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -89,6 +82,7 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
 
+        // Coordinates Input / Internet Error message Column
         Column (
             modifier = Modifier
                 .background(if (isInternetConnected) StyleBlue else Color.Red)
@@ -112,6 +106,7 @@ fun HomeScreen(
             }
         }
 
+        // Second Main Column - forecast/buttons
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -147,9 +142,10 @@ fun HomeScreen(
                     vm.getWeather()
                 }
             ) {
-                Text(text = "KTS test API")
+                Text(text = "Test KTH API")
             }
 
+            // Weekly Forecast Column - Scrollable
             Column (modifier = Modifier.background(Color.White, RoundedCornerShape(10.dp))){
                 LazyColumn(
                     modifier = Modifier
@@ -160,9 +156,9 @@ fun HomeScreen(
                         Text(text = "Weekly Forecast")
                     }
                     // This for-loop will create list items for each day's forecast
-                    for (i in 0 until 7) {
+                    for (day in WeatherDay.values()) {
                         item {
-                            WeatherDayItem(weeklyForecast.getWeatherBoxForDay(i), int_to_day_string(i))
+                            WeatherDayItem(weeklyForecast.getDailyForecast(day).getHourlyForecast(12), int_to_day_string(day.int).name)
                         }
                     }
                 }
@@ -170,7 +166,6 @@ fun HomeScreen(
         }
     }
 }
-
 
 @Composable
 fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
@@ -183,9 +178,10 @@ fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
             Text(text = "${dayOfWeek}:", fontWeight = FontWeight.Bold)
             if (weatherBox != null) {
                 Text(text = "${weatherBox.weatherType}")
-                Text(text = "Temp: ${weatherBox.weather.temperature.toString()}°")
-                Text(text = "Rain: ${weatherBox.weather.rain.toString()}%")
-                Text(text = "Wind Speed: ${weatherBox.weather.wind_speed.toString()}m/s")
+                Text(text = "${weatherBox.weatherType}")
+                Text(text = "Temp: ${weatherBox.weatherParams.temperature.toString()}°")
+                Text(text = "Rain: ${weatherBox.weatherParams.relativeHumidity.toString()}%")
+                Text(text = "Wind Speed: ${weatherBox.weatherParams.windSpeed.toString()}m/s")
             }
         }
     }
@@ -247,19 +243,6 @@ fun MyInputComponent(vm: WeatherViewModel) {
         }
     }
 }
-
-/*
-@Composable
-fun MyConnectivityAwareComponent() {
-    val context = LocalContext.current
-    val isInternetConnected = isInternetAvailable(context)
-
-    if (isInternetConnected) {
-        // UI for when the internet is available
-    } else {
-        // UI for when the internet is not available
-    }
-}*/
 
 fun isInternetAvailable(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
