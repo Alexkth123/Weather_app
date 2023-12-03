@@ -177,8 +177,7 @@ fun WeatherDayItem(weatherBox: Weather_Box?, dayOfWeek: String) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "${dayOfWeek}:", fontWeight = FontWeight.Bold)
             if (weatherBox != null) {
-                Text(text = "${weatherBox.weatherType}")
-                Text(text = "${weatherBox.weatherType}")
+                Text(text = "${weatherBox.weatherType.emoji}")
                 Text(text = "Temp: ${weatherBox.weatherParams.temperature.toString()}°")
                 Text(text = "Rain: ${weatherBox.weatherParams.relativeHumidity.toString()}%")
                 Text(text = "Wind Speed: ${weatherBox.weatherParams.windSpeed.toString()}m/s")
