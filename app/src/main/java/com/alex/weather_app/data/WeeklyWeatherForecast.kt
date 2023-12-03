@@ -1,6 +1,10 @@
 package com.alex.weather_app.data
 
 import android.util.Log
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 /**
@@ -12,13 +16,15 @@ import android.util.Log
  *
  *When calling the constructor of forcast
  */
+
+@Serializable
 class WeeklyWeatherForecast {
 
     private val weeklyForecast: ArrayList<DailyWeatherForecast> = ArrayList()
 
-    constructor(){
+    init {
         for (i in 0 until 7) {
-            Log.d("Weekly forecast","Creating weeklyForecast $i")
+            Log.d("Weekly forecast", "Creating weeklyForecast $i")
             weeklyForecast.add(DailyWeatherForecast())
         }
     }
@@ -29,5 +35,21 @@ class WeeklyWeatherForecast {
 
     fun getDailyForecast(day: WeatherDay): DailyWeatherForecast {
         return weeklyForecast.get(day.int)
+    }
+
+    /**
+     * Serialize the WeeklyWeatherForecast to a JSON string.
+     */
+    fun toJson(): String {
+        return Json.encodeToString(this)
+    }
+
+    companion object {
+        /**
+         * Deserialize a WeeklyWeatherForecast from a JSON string.
+         */
+        fun fromJson(json: String): WeeklyWeatherForecast {
+            return Json.decodeFromString(json)
+        }
     }
 }

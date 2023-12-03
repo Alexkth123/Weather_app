@@ -1,7 +1,9 @@
 package com.alex.weather_app.data
 
 import android.util.Log
+import kotlinx.serialization.Serializable
 
+@Serializable
 class DailyWeatherForecast {
     private val dailyForecast: ArrayList<Weather_Box?> = ArrayList()
 

@@ -1,11 +1,8 @@
 package com.alex.weather_app
 
 import android.app.Application
-import android.content.Context
 import com.alex.weather_app.data.WeatherRepository
 import com.alex.weather_app.ui.viewmodels.WeatherViewModel
-import java.util.prefs.Preferences
-
 
 
 /**

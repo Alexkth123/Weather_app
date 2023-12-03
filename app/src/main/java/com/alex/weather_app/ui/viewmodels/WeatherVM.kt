@@ -1,5 +1,7 @@
 package com.alex.weather_app.ui.viewmodels
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -44,8 +46,13 @@ interface WeatherViewModel{
  */
 
 class WeatherVM (
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
+    private val context: Context
 ):WeatherViewModel,ViewModel() {
+
+    private val PREFS_NAME = "weather_prefs"
+    private val KEY_SERIALIZED_DATA = "serialized_data"
+
     private var job: Job? = null
     private var timerJob: Job? = null
 
@@ -68,9 +75,12 @@ class WeatherVM (
     override val internetConnection: LiveData<Boolean>
         get() = _internetConnection
 
-    private var _clickedWeatherBox = MutableStateFlow(Weather_Box("", WeatherDay.MONDAY, 0,
+    private var _clickedWeatherBox = MutableStateFlow(Weather_Box(
+        "",
+        WeatherDay.MONDAY,
         WeatherParameters("", "", "","", "", "","", "", "","", "", "","", "", "","", "", ""),
-        WeatherType.CLEAR_SKY))
+        WeatherType.CLEAR_SKY
+    ))
     override val clickedWeatherBox: StateFlow<Weather_Box?>
         get() = _clickedWeatherBox
 
@@ -102,7 +112,8 @@ class WeatherVM (
                         //model.make_weather_Box(_coordinates.value.toString())
                         _weeklyForecast.value = model.buildWeeklyForecast(_coordinates.value.toString())
 
-
+                        saveSerializedDataToStorage(_weeklyForecast.value.toJson())
+                        Log.e("Serialize", "Serialized to storage")
                     }catch (exception: Exception) {
                         Log.e("API Error", "Failed to fetch weather data", exception)
                     }
@@ -117,14 +128,15 @@ class WeatherVM (
     }
 
     override fun newWeatherLocation() {
-
-        job =viewModelScope.launch {
+        job = viewModelScope.launch {
             try {
                 //model.make_weather_Box(_coordinates.value.toString())
-                _weeklyForecast.value=model.buildWeeklyForecast(_coordinates.value.toString())
+                _weeklyForecast.value = model.buildWeeklyForecast(_coordinates.value.toString())
 
-
-            }catch (exception: Exception) {
+                // Save the updated forecast to storage after fetching new weather data
+                saveSerializedDataToStorage(_weeklyForecast.value.toJson())
+                Log.e("Serialize", "Serialized to storage")
+            } catch (exception: Exception) {
                 Log.e("API Error", "Failed to fetch weather data", exception)
             }
         }
@@ -135,13 +147,16 @@ class WeatherVM (
     }
 
     companion object {
-        val Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(WeatherVM::class.java)) {
-                    @Suppress("UNCHECKED_CAST")
-                    return WeatherVM(WeatherRepository()) as T
+        // Factory outside the companion object
+        fun createFactory(context: Context): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    if (modelClass.isAssignableFrom(WeatherVM::class.java)) {
+                        @Suppress("UNCHECKED_CAST")
+                        return WeatherVM(WeatherRepository(), context) as T
+                    }
+                    throw IllegalArgumentException("Unknown ViewModel class")
                 }
-                throw IllegalArgumentException("Unknown ViewModel class")
             }
         }
     }
@@ -164,14 +179,34 @@ class WeatherVM (
     }
 
 
-
     init {
-        startTimer(300)
-        /*viewModelScope.launch {
-            userPreferencesRepository.numberOfEvents.collect {
-                _numberOfEvents.value = it
+        // Load serialized data from storage
+        val serializedData: String? = loadSerializedDataFromStorage()
+
+        // Deserialize the data and update the _weeklyForecast variable
+        if (serializedData != null) {
+            try {
+                _weeklyForecast.value = WeeklyWeatherForecast.fromJson(serializedData)
+                Log.e("WeatherVM", "Deserialized data!")
+            } catch (e: Exception) {
+                Log.e("WeatherVM", "Failed to deserialize data", e)
             }
-        }*/
+        }
+
+        // Start the timer
+        startTimer(300)
+    }
+
+    private fun loadSerializedDataFromStorage(): String? {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(KEY_SERIALIZED_DATA, null)
+    }
+
+    private fun saveSerializedDataToStorage(serializedData: String) {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString(KEY_SERIALIZED_DATA, serializedData).apply()
     }
 
 }

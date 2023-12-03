@@ -19,10 +19,9 @@ import com.alex.weather_app.ui.viewmodels.WeatherVM
 
 public class MainActivity : ComponentActivity() {
 
-    val weatherViewModel: WeatherVM by viewModels { WeatherVM.Factory }
-
-
-
+    val weatherViewModel: WeatherVM by viewModels {
+        WeatherVM.createFactory(applicationContext)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +34,6 @@ public class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    val weatherViewModel: WeatherVM = viewModel(
-                        factory = WeatherVM.Factory
-                    )
 
                     // Instantiate the homescreen
                     HomeScreen(vm = weatherViewModel)

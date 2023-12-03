@@ -116,7 +116,7 @@ class WModel(private val repository: WeatherRepository){
 
                 val weatherParameters = WeatherParameters(temperature, seaLevelPressure, visibility, windDirection, windSpeed, relativeHumidity, thunderstormProbability, totalCloudCover, lowCloudCover, mediumCloudCover, highCloudCover, windGust, minPrecipitation, maxPrecipitation, percentOfPrecipitationInFrozenForm, precipitationCategory, meanPrecipitation, medianPrecipitation)
 
-                val weatherBox = Weather_Box(date, day, hour.toInt(), weatherParameters, weatherType)
+                val weatherBox = Weather_Box(date, day, weatherParameters, weatherType)
 
                 if(weeklyForecast.getDailyForecast(day) == null){
                     val dailyForecast = DailyWeatherForecast()

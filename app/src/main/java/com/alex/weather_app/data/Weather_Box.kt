@@ -1,13 +1,15 @@
 package com.alex.weather_app.data
 
+import kotlinx.serialization.Serializable
+
 /**
  * This Class consists of the Weather datatype, and the enum weather_type to represent the
  * image of the weather condition
  */
-class Weather_Box (
+@Serializable
+class Weather_Box(
     val weatherDate: String,
     val weatherDay: WeatherDay,
-    val weatherHour: Int,
     val weatherParams: WeatherParameters,
     val weatherType: WeatherType
 ){
@@ -18,8 +20,6 @@ class Weather_Box (
 
 }
 
-
-
 /**
  *  Weather.kt would typically be a data model
  *  representing weather-related information.
@@ -27,6 +27,7 @@ class Weather_Box (
  *  ViewModel, and Repository layers
  */
 
+@Serializable
 data class WeatherParameters(
     var temperature: String,
     var seaLevelPressure: String,
@@ -48,6 +49,7 @@ data class WeatherParameters(
     var medianPrecipitation: String
 ){}
 
+@Serializable
 enum class WeatherType(val emoji: weather_type, val wSymbol: Int) {
     CLEAR_SKY(weather_type.`☀️`, 1),
     NEARLY_CLEAR_SKY(weather_type.`☀️`, 2),
@@ -84,6 +86,7 @@ enum class WeatherType(val emoji: weather_type, val wSymbol: Int) {
     }
 }
 
+@Serializable
 enum class WeatherDay(val int: Int) {
     MONDAY(0),
     TUESDAY(1),
@@ -100,8 +103,7 @@ enum class WeatherDay(val int: Int) {
     }
 }
 
-
-
+@Serializable
 enum class weather_type(val emoji: String){
     `☀️`("Sunny"),
     `🌥️`("HalfClear"),
@@ -112,32 +114,6 @@ enum class weather_type(val emoji: String){
     `️🌨️`("Snowy"),
     `️💀`("Ded")
 }
-
-
-// Maybe not useful since every value is a string
-/*
-fun Weather.toWeather(): Weather {
-    return Weather(
-        temperature = this.temperature,
-        seaLevelPressure = this.seaLevelPressure,
-        visibility = this.visibility,
-        windDirection = this.windDirection,
-        windSpeed = this.windSpeed,
-        relativeHumidity = this.relativeHumidity,
-        thunderstormProbability = this.thunderstormProbability,
-        totalCloudCover = this.totalCloudCover,
-        lowCloudCover = this.lowCloudCover,
-        mediumCloudCover = this.mediumCloudCover,
-        highCloudCover = this.highCloudCover,
-        windGust = this.windGust,
-        minPrecipitation = this.minPrecipitation,
-        maxPrecipitation = this.maxPrecipitation,
-        sunshineProbability = this.sunshineProbability,
-        precipitationCategory = this.precipitationCategory,
-        meanPrecipitation = this.meanPrecipitation,
-        medianPrecipitation = this.medianPrecipitation
-    )
-}*/
 
 
 fun int_to_day_string(int: Int): WeatherDay{
