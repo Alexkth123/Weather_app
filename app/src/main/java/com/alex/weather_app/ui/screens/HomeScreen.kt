@@ -35,6 +35,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -47,10 +48,8 @@ import androidx.compose.ui.text.font.FontFamily
 import com.alex.weather_app.R
 import com.alex.weather_app.data.WeatherDay
 import com.alex.weather_app.data.WeeklyWeatherForecast
-import com.alex.weather_app.data.weather_type
 import com.alex.weather_app.ui.theme.StandbyBlue
 import com.alex.weather_app.ui.theme.StyleBlue
-import com.alex.weather_app.ui.viewmodels.WeatherVM
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -164,15 +163,6 @@ fun HomeScreen(
                 fontFamily = FontFamily.Serif
             )
 
-
-            /*Button(
-                onClick = {
-                    vm.getWeather()
-                }
-            ) {
-                Text(text = "Test KTH API")
-            }*/
-
             // Weekly Forecast Column - Scrollable
             Column (
                 modifier = Modifier
@@ -198,6 +188,10 @@ fun HomeScreen(
 @Composable
 fun WeatherDayItem(vm: WeatherViewModel, weeklyForecast: WeeklyWeatherForecast, clickedWeatherBox: Weather_Box?) {
 
+    val currentDateTime = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("EEEE")
+    val formattedDateTime = currentDateTime.format(formatter)
+
     for (day in WeatherDay.values()) {
         Card(
             modifier = Modifier
@@ -205,7 +199,7 @@ fun WeatherDayItem(vm: WeatherViewModel, weeklyForecast: WeeklyWeatherForecast, 
                 .padding(vertical = 4.dp),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "${day}:", fontWeight = FontWeight.Bold)
+                Text(text = if (formattedDateTime.toLowerCase().equals(day.toString().toLowerCase())) "TODAY ${day}:" else "${day}:", fontWeight = FontWeight.Bold)
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -223,7 +217,11 @@ fun WeatherDayItem(vm: WeatherViewModel, weeklyForecast: WeeklyWeatherForecast, 
                                         color = if (weatherBox.equals(clickedWeatherBox)) StandbyBlue else Color.Transparent
                                     )
                                     .padding(8.dp)
-                                    .clickable { vm.setClickedWeatherBox(weatherBox) },
+                                    .clickable {
+                                        if (weatherBox.equals(clickedWeatherBox)) vm.setClickedWeatherBox(
+                                            null
+                                        ) else vm.setClickedWeatherBox(weatherBox)
+                                    },
 
                                 contentAlignment = Alignment.Center
                             ) {
@@ -251,8 +249,29 @@ fun WeatherDayItem(vm: WeatherViewModel, weeklyForecast: WeeklyWeatherForecast, 
                     }
                 }
                 if(clickedWeatherBox != null && clickedWeatherBox.weatherDate != "" && clickedWeatherBox.weatherDay == day) {
-                    Text(text = "Humidity: ${clickedWeatherBox.weatherParams.relativeHumidity}%")
-                    Text(text = "Wind Speed: ${clickedWeatherBox.weatherParams.windSpeed}m/s")
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ){
+                        Column (
+                            modifier = Modifier
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ){
+                            Text(text = "Date: ${clickedWeatherBox.weatherDate}")
+                            Text(text = "Wind Speed: ${clickedWeatherBox.weatherParams.windSpeed}m/s")
+                        }
+                        Column (
+                            modifier = Modifier
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ){
+                            Text(text = "Visibility: ${clickedWeatherBox.weatherParams.visibility}km")
+                            Text(text = "Humidity: ${clickedWeatherBox.weatherParams.relativeHumidity}%")
+                        }
+                    }
                 }
             }
         }

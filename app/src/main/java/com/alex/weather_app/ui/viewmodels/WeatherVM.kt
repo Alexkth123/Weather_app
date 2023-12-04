@@ -33,7 +33,7 @@ interface WeatherViewModel{
     val clickedWeatherBox: StateFlow<Weather_Box?>
      fun getWeather()
      fun newWeatherLocation()
-     fun setClickedWeatherBox(weatherBox: Weather_Box)
+     fun setClickedWeatherBox(weatherBox: Weather_Box?)
 }
 
 
@@ -142,8 +142,17 @@ class WeatherVM (
         }
     }
 
-    override fun setClickedWeatherBox(weatherBox: Weather_Box){
-        _clickedWeatherBox.value = weatherBox
+    override fun setClickedWeatherBox(weatherBox: Weather_Box?){
+        if (weatherBox != null) {
+            _clickedWeatherBox.value = weatherBox
+        }else{
+            _clickedWeatherBox.value = Weather_Box(
+                "",
+                WeatherDay.MONDAY,
+                WeatherParameters("", "", "","", "", "","", "", "","", "", "","", "", "","", "", ""),
+                WeatherType.CLEAR_SKY
+            )
+        }
     }
 
     companion object {

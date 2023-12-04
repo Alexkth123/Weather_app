@@ -52,12 +52,12 @@ data class WeatherParameters(
 @Serializable
 enum class WeatherType(val emoji: weather_type, val wSymbol: Int) {
     CLEAR_SKY(weather_type.`☀️`, 1),
-    NEARLY_CLEAR_SKY(weather_type.`☀️`, 2),
+    NEARLY_CLEAR_SKY(weather_type.`🌤️`, 2),
     VARIABLE_CLOUDINESS(weather_type.`🌥️`, 3),
     HALF_CLEAR_SKY(weather_type.`🌥️`, 4),
     CLOUDY_SKY(weather_type.`☁️`, 5),
     OVERCAST(weather_type.`☁️`, 6),
-    FOG(weather_type.`☁️`, 7),
+    FOG(weather_type.`🌫️`, 7),
     LIGHT_RAIN_SHOWERS(weather_type.`️🌧️`, 8),
     MODERATE_RAIN_SHOWERS(weather_type.`️🌧️`, 9),
     HEAVY_RAIN_SHOWERS(weather_type.`️🌧️`, 10),
@@ -74,7 +74,7 @@ enum class WeatherType(val emoji: weather_type, val wSymbol: Int) {
     THUNDER(weather_type.`️⛈️`, 21),
     LIGHT_SLEET(weather_type.`☁️`, 22),
     MODERATE_SLEET(weather_type.`☁️`, 23),
-    HEAVY_SLEET(weather_type.`☁️`, 24),
+    HEAVY_SLEET(weather_type.`️💀`, 24),
     LIGHT_SNOWFALL(weather_type.`️🌨️`, 25),
     MODERATE_SNOWFALL(weather_type.`️🌨️`, 26),
     HEAVY_SNOWFALL(weather_type.`️🌨️`, 27);
@@ -106,12 +106,14 @@ enum class WeatherDay(val int: Int) {
 @Serializable
 enum class weather_type(val emoji: String){
     `☀️`("Sunny"),
+    `🌤️`("NearClear"),
     `🌥️`("HalfClear"),
     `☁️`("Cloudy"),
     `️🌧️`("Rainy"),
     `️❄️`("Cold"),
     `️⛈️`("Thunder"),
     `️🌨️`("Snowy"),
+    `🌫️`("Foggy"),
     `️💀`("Ded")
 }
 

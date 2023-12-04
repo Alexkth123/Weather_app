@@ -46,12 +46,8 @@ interface ApiService {
 
 class WeatherRepository() {
 
-
-
     private val apiService: ApiService
     private val BASE_URL = "https://opendata-download-metfcst.smhi.se/"
-    //private var weatherData = parseJsonToWeatherData("hello") // make to mutable stateflow
-   // private val weatherDao: WeatherDao
 
     init {
         val mHttpLoggingInterceptor = HttpLoggingInterceptor()
